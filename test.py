@@ -48,7 +48,7 @@ class TestPrograma(unittest.TestCase):
         self.assertEqual(bus.cobrar_pasaje(tarjeta=tarjeta,dia=4),0b1)
 
     def test_6(self):
-        bus = Bus()
+        bus = Bus() 
         tarjeta = Tarjeta(nombres="Yamil",apellidos="Nunez",codigo="1134567",saldo_inicial=0.25)
         self.assertEqual(bus.cobrar_pasaje(tarjeta=tarjeta,dia=4),0b0)
 
