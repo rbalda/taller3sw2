@@ -1,19 +1,19 @@
-# Taller 3 de Ingenieria de Software 2
-Taller 3 de pruebas con travis y coveralls
+# Taller2 de Ingenieria de Software 2
+Taller 2 de pruebas con travis y coveralls
 
 Para este taller realice lo siguiente:
 
-1\. Realice un clone del repositorio con `git clone https://github.com/rbalda/taller3sw2.git `
+1\. Realice un clone del repositorio con `git clone https://github.com/rbalda/taller2sw2.git `
 
-2\. Ingrese a la carpeta `cd taller3sw2`
+2\. Ingrese a la carpeta `cd taller2sw2`
 
 3\. Cree una nueva rama con el nombre de su usuario de github `git checkout -b su_nombre_usuario_github`
 
-4\. Realice las modificaciones necesarias en el archivo programa.py.
+4\. Codifique el programa.
 
 5\. Programe las pruebas unitarias ayudándose de las particiones de equivalencias identificadas.
 
-6\. Añada los archivos necesarios para trabajar con travis y coveralls.
+6\. Añada los archivos necesarios con travis y coveralls.
 
 5\. Corra localmente las pruebas y verifique que se ejecutan sin errores.
 
