@@ -1,3 +1,5 @@
+from datetime import datetime, date, time, timedelta
+
 
 class Tarjeta(object):
     """
@@ -26,12 +28,13 @@ class Tarjeta(object):
         """
         self.saldo=self.saldo-valor
 
+
 class Validador(object):
     """
     Modulo que valida la tarjeta
     """
     @classmethod
-    def validar_tarjeta(cls,tarjeta=None):
+    def esTarjetaValida(cls, tarjeta):
         """
         Funcion que valida que la tarjeta sea valida o de un tipo estudiante o trabajador
         :param tarjeta: Trajeta que contiene un codigo numerico
@@ -39,20 +42,34 @@ class Validador(object):
         """
         try:
             if len(tarjeta.codigo)== tarjeta.digitos_max and tarjeta.codigo.isdigit():
-                if tarjeta.codigo[:2]== tarjeta.inicio:
-                    return "TRABAJADOR"
-                else:
-                    return "ESTUDIANTE"
-            return "INVALIDA"
+                return True
+            return False
         except:
-            return "INVALIDA"
+            return False
+
+    @classmethod
+    def esEmpleado (cls,tarjeta = None):
+        if cls.esTarjetaValida(tarjeta) and tarjeta.codigo[:2]== tarjeta.inicio:
+            return True
+        return False
+
+    @classmethod
+    def esEstudiante (cls,tarjeta = None):
+        if cls.esTarjetaValida(tarjeta) and tarjeta.codigo[:2]!= tarjeta.inicio:
+            return True
+        return False  
 
 
-class Edificio(object):
+class Edificio():
     """
     Modulo que verifica accesos al edificio
     """
-    def conceder_acceso(self,tarjeta=None,dia=0,hora=0):
+    horaEstudianteInicio = time(8, 0, 0)  # Asigna 8h 0m 0s
+    horaEstudianteFin = time(18, 0, 0)  # Asigna 18h 0m 0s
+    horaEmpleadoInicio = time(10, 0, 0)  # Asigna 10h 0m 0s
+    horaEmpleadoFin = time(15, 0, 0)  # Asigna 15h 0m 0s        
+  
+    def conceder_acceso(self, tarjeta, dia, hora):
         """
         Funcion que verifica si el acceso se concedio o no
         :param tarjeta: Tarjeta del usuario a ingresar
@@ -60,19 +77,16 @@ class Edificio(object):
         :param hora: hora del dia en formato 24, este valor sera solo un entero
         :return: 1 binario si el acceso es concedido, 0 si el acceso es denegado
         """
-        if dia > 0 and dia < 8:
-            if Validador.validar_tarjeta(tarjeta)=="TRABAJADOR":
-                if dia <= 5:
-                    return 0b1
-                else:
-                    if hora >=10 and hora <=15:
-                        return 0b1
-            elif Validador.validar_tarjeta(tarjeta)=="ESTUDIANTE":
-                if dia <= 5:
-                    if hora >= 8 and hora <=18:
-                        return 0b1
-            else:
-                return 0b0
+        print ("dia" )
+        print (hora)
+        if dia <= 5:
+            if Validador.esEmpleado(tarjeta):
+                return 0b1
+            elif Validador.esEstudiante(tarjeta) and hora >= self.horaEstudianteInicio and hora <=self.horaEstudianteFin:
+                return 0b1
+        else:
+            if Validador.esEmpleado(tarjeta) and hora >= self.horaEmpleadoInicio and hora <=self.horaEmpleadoFin:
+                return 0b1
         return 0b0
 
 
@@ -81,7 +95,8 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
+        self.descuento = 0
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -91,11 +106,57 @@ class Bus(object):
         :return: 1 en binario si el pasaje es pagado, 0 si este no se pudo cobrar
         """
         if dia > 0 and dia <= 5:
-            if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
+            if Validador.esTarjetaValida(tarjeta):
                 if dia == 5:
                     return 0b1
                 else:
-                    if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
+                    if Validador.esEmpleado(tarjeta):
+                        self.descuento=0.5                        
+                    if tarjeta.saldo >= (self.pasaje*(1-self.descuento)):
+                        tarjeta.debitar(self.pasaje * (1-self.descuento))
                         return 0b1
         return 0b0
+
+class Libro (object):
+    """
+    Clase que modela el libro
+    """
+    def __init__(self, categoria=None, estado=0):
+        self.categoria = categoria
+        self.estado=estado
+
+    def prestar (self):
+        if estado==0:
+            estado=1
+            return True
+        else:
+            return False
+
+
+class CategoriaLibro (object):
+    """
+    Modulo que verifica la categoria del libro y obtiene tiempo maximo de prestamo
+    """
+    @classmethod
+    def tiempoPrestamo(cls,libro=None):
+        switcher = {
+            "CE": 7,
+            "CN": 14,
+            "CS": 14,
+            "CH": 14,
+            }
+        return switcher.get (libro.categoria, 0)
+
+class Biblioteca (object):
+
+    def __init__(self):
+        self.fechaInicio = datetime(2016, 10, 1, 0, 0, 0)
+
+    def prestarLibro (libro = None, tarjeta = None, fechaActual = None):
+        if fechaActual >= self.fechaInicio and libro.estado==0 and Validador.esTarjetaValida(tarjeta):
+            print("prestado hasta")
+            diasPrestamo = CategoriaLibro.tiempoPrestamo (libro)
+            fechaDevolucion = datetime (fechaActual.year, fechaActual.month, fechaActual.day + diasPrestamo, 0, 0, 0)
+            print (fechaDevolucion)
+        else:
+            print("No presto")

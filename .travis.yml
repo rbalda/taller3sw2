@@ -1,0 +1,14 @@
+language: python
+python:
+  - 3.4
+
+before_install:
+  - pip install -r requirements.txt
+
+
+script:
+  - python -m coverage run test.py
+  - coveralls
+
+after_script:
+  coveralls
