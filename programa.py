@@ -1,3 +1,4 @@
+import datetime
 
 class Tarjeta(object):
     """
@@ -81,7 +82,7 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -96,6 +97,42 @@ class Bus(object):
                     return 0b1
                 else:
                     if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
+                        if tarjeta.codigo[:2]==tarjeta.inicio:
+                            tarjeta.debitar(self.pasaje/2)
+                        else:
+                            tarjeta.debitar(self.pasaje)
                         return 0b1
         return 0b0
+
+class Libro(object):
+    """
+    Modulo de Libro
+    """
+    def __init__(self,categoria="CE",estado=0):
+        self.categoria=categoria
+        self.estado=estado
+
+    def prestamo(self,fecha=""):
+        """
+        Funcion que verifica que el prestamo del libro se haga exitosamente
+        :param libro: Libro que el usuario desea pedir
+        :param fecha: fecha en la que el usuario pide el libro, en formato dd/mm/aaaa
+        :return: dia en el que el libro se debe de devolver, 0 si no se puede prestar.
+        """
+        if self.categoria not in ["CE", "CN", "CS", "CH"]:
+            return
+        
+        if self.estado==0:
+            now=datetime.datetime.strptime(fecha, "%d/%m/%Y")
+            if self.categoria in "CE":
+                until=datetime.timedelta(days=7)
+                return (now+until).strftime('%d/%m/%Y')
+            else:
+                until=datetime.timedelta(days=14)
+                return (now+until).strftime('%d/%m/%Y')
+        else:
+            return 0b0
+
+tarjeta=Tarjeta("Leo","Eras","0928358",2.0)
+bus=Bus()
+print(bus.cobrar_pasaje(tarjeta,1))

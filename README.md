@@ -3,7 +3,7 @@ Taller 3 de pruebas con travis y coveralls
 
 Para este taller realice lo siguiente:
 
-1\. Realice un clone del repositorio con `git clone https://github.com/rbalda/taller3sw2.git `
+1\. Realice un clone del repositorio con `git clone https://github.com/rbalda/taller2sw2.git `
 
 2\. Ingrese a la carpeta `cd taller3sw2`
 
