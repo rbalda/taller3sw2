@@ -133,12 +133,14 @@ class Biblioteca(object):
         """
         if libro.estado == 0:
             if libro.categoria =="CE":
-                fecha_entrega = fecha + datetime.timedelta(days=7)
+                date_1 = datetime.datetime.strptime(fecha, "%m/%d/%y")
+                fecha_entrega = date_1 + datetime.timedelta(days=7)
                 libro.prestar()
                 return fecha_entrega
             else:
                 if libro.categoria=="CN" or libro.categoria=="CS" or libro.categoria=="CH":
-                    fecha_entrega = fecha + datetime.timedelta(days=14)
+                    date_1 = datetime.datetime.strptime(fecha, "%m/%d/%y")
+                    fecha_entrega = date_1 + datetime.timedelta(days=14)
                     libro.prestar()
                     return fecha_entrega
                 else:
