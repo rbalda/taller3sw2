@@ -81,7 +81,7 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -91,11 +91,55 @@ class Bus(object):
         :return: 1 en binario si el pasaje es pagado, 0 si este no se pudo cobrar
         """
         if dia > 0 and dia <= 5:
+            
             if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
                 if dia == 5:
                     return 0b1
                 else:
-                    if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
-                        return 0b1
+                    if Validador.validar_tarjeta(tarjeta) == "TRABAJADOR":
+                            print("Dcto 50%")
+                            self.pasaje = 0.15
+                            if tarjeta.saldo >= self.pasaje:
+                                    tarjeta.debitar(self.pasaje)
+                                    return 0b1
+                    elif Validador.validar_tarjeta(tarjeta) == "ESTUDIANTE":
+                            print("Pasaje 30ctvs")
+                            if tarjeta.saldo >= self.pasaje:
+                                    tarjeta.debitar(self.pasaje)
+                                    return 0b1
         return 0b0
+
+
+class Libro():
+    def __init__(self):
+        self.disponible = 1
+        self.no_disponible = 0
+
+    def Categoria(self):
+        if (categoria == 'CE'):
+            return 1
+        else:
+            return o
+
+        
+
+    
+class Biblioteca(object):
+
+    def prestar_libro(self, libro ,tarjeta, fecha_actual):
+        dias_prestado = 0
+        if libro.Categoria == 'CE':
+                print("libro de ciencias exactas")
+                dias_prestado = 7
+                fecha_devolver= (fecha_actual + dias_prestado) + "08/2016"
+        if (libro.Categoria != 'CE'):
+                print("libro no de ciencias exactas")
+                dias_prestado =14
+                fecha_devolver= (fecha_actual + dias_prestado) + "08/2016"
+            
+                
+                
+            
+        
+    
+    
