@@ -1,5 +1,5 @@
 import unittest
-from programa import Libro,Tarjeta,Edificio,Validador,Bus,Fecha
+from programa import Libro,Tarjeta,Edificio,Validador,Bus,Fecha,Prestamo
 
 #taller
 class AddTest(unittest.TestCase):
@@ -8,6 +8,9 @@ class AddTest(unittest.TestCase):
        self.tarjetat = Tarjeta('jose','velez','0034567',1)
        self.bus= Bus()
        self.edificio=Edificio()
+       self.libro=Libro()
+       self.fecha=Fecha()
+       self.Prestamo=Prestamo()
 
    def tearDown(self):
       pass
@@ -36,15 +39,29 @@ class AddTest(unittest.TestCase):
    def test_diaFinDeSemana_Bus(self):
        self.assertEqual(Bus.cobrar_pasaje(self.bus,self.tarjeta,6),0)
 
+
+
    def test_saldoMayor30ctvs_Bus(self):
        self.assertEqual(Bus.cobrar_pasaje(self.bus,self.tarjeta,1),1)
    def test_saldoMenor30ctvs_Bus(self):
        self.tarjeta.saldo=0.15
        self.bus.saldo=.30
        self.assertEqual(Bus.cobrar_pasaje(self.bus,self.tarjeta,1),0)
-       def test_saldoMenor15ctvs_Bus(self):
-           self.tarjeta.saldo=0.15
-           self.assertEqual(Bus.cobrar_pasaje(self.bus,self.tarjetat,1),0)
+   def test_saldo15ctvs_Bus_Trabajador(self):
+       self.tarjeta.saldo=0.15
+       self.assertEqual(Bus.cobrar_pasaje(self.bus,self.tarjetat,1),1)
+   def test_saldoMenor15ctvs_Bus_Trabajador(self):
+       self.tarjetat.saldo=0.12
+       self.assertEqual(Bus.cobrar_pasaje(self.bus,self.tarjetat,1),0)
+   def test_prestamo(self):
+       self.libro.tipo='CE'
+       self.libro.estado=0
+       self.fecha.anio=2016
+       self.fecha.mes=11
+       self.fecha.dia=20
+       self.assertEqual(Prestamo.realizar_prestamo(self,self.tarjeta, self.libro, self.fecha),1)
+
+
 
 if __name__=='__main__':
     unittest.main()

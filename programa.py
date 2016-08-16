@@ -79,7 +79,7 @@ class Libro(object):
     """
     Clase que modela el libro
     """
-    def __init__(self):
+    def __init__(self,tipo=None,estado=0):
         """
         Construntor de la clase que recibe parametros para inicializarla
         :param nombres: Nombres de la persona a quien pertenece la tarjeta
@@ -98,7 +98,7 @@ class Libro(object):
         self.estado=1
 
 class Fecha(object):
-    def __init__(self):
+    def __init__(self,anio=0,dia=0,mes=0):
         self.anio=anio
         self.mes=mes
         self.dia=dia
@@ -130,16 +130,17 @@ class Fecha(object):
         print(self.dia)
 
 class Prestamo(object):
-    def realizar_prestamo(self,tarjeta=None,mes=8, libro=None, fecha=None):
+    def realizar_prestamo(self,tarjeta=None,libro=None, fecha=None,):
 
-        if mes >= 8:
             if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
                 if fecha.mes>7:
                     if libro.tipo=='CE':
-                        libro.calcular_devolucion7
+                        fecha.calcular_devolucion7()
 
                     elif (libro.tipo=='CN' |libro.tipo=='CS' |libro.tipo=='CH'):
-                        libro.calcular_devolucion14
+                        fecha.calcular_devolucion14()
+
+            return 1
 
 class Bus(object):
     """
