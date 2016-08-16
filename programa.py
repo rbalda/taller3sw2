@@ -1,4 +1,5 @@
-
+from datetime import date
+from datetime import timedelta
 class Tarjeta(object):
     """
     Clase que modela la tarjeta para acceso a edificio y pago de bus
@@ -81,7 +82,7 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -91,11 +92,48 @@ class Bus(object):
         :return: 1 en binario si el pasaje es pagado, 0 si este no se pudo cobrar
         """
         if dia > 0 and dia <= 5:
-            if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
+            tarjeta_tipo = Validador.validar_tarjeta(tarjeta)
+            if tarjeta_tipo != "INVALIDA":
                 if dia == 5:
                     return 0b1
                 else:
+                    if tarjeta_tipo == "TRABAJADOR":
+                        self.pasaje = 0.15
                     if tarjeta.saldo >= self.pasaje:
                         tarjeta.debitar(self.pasaje)
                         return 0b1
         return 0b0
+
+class Biblioteca(object):
+    """
+    modulo Biblioteca, sirve para el préstamo de libros
+    """
+    tiempo_prestamo = 14
+
+    @classmethod
+    def prestar_libro(self,libro=None, tarjeta=None, fecha_actual=date.today()):
+        tarjeta_valida = Validador.validar_tarjeta(tarjeta) != "INVALIDA"
+        categoria_libro_valida = libro.validar_categoria()
+
+        if tarjeta_valida:
+            if not libro.prestado and categoria_libro_valida:
+                if libro.categoria == "CE":
+                    self.tiempo_prestamo = 7
+
+                libro.prestado = 1
+                fecha_devolucion = fecha_actual + timedelta(days=self.tiempo_prestamo)
+                fecha_devolucion = fecha_devolucion.strftime('%d/%m/%Y') #devuelve fecha en formato dd/mm/aa
+                return fecha_devolucion
+
+        return 0b0
+
+class Libro(object):
+    """
+    clase que modela el libro para poder prestarlo a un estudiante o trabajador
+    """
+    def __init__(self, categoria):
+        self.categoria = categoria
+        self.prestado = 0
+
+    def validar_categoria(self):
+        return self.categoria in ["CE", "CN", "CS", "CH"]
