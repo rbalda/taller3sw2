@@ -1,3 +1,5 @@
+from datetime import datetime
+from datetime import timedelta
 
 class Tarjeta(object):
     """
@@ -81,9 +83,9 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
 
-    def cobrar_pasaje(self,tarjeta=None,dia=0):
+    def cobrar_pasaje(self, tarjeta=None, dia=0):
         """
         Funcion que verifica que el pasaje haya sido pagado exitosamente
         :param tarjeta: Tarjeta del usuario que paga el pasaje
@@ -95,7 +97,56 @@ class Bus(object):
                 if dia == 5:
                     return 0b1
                 else:
-                    if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
-                        return 0b1
+                    if Validador.validar_tarjeta(tarjeta) == "TRABAJADOR":
+                        if tarjeta.saldo >= self.pasaje:
+                            tarjeta.debitar(self.pasaje/2)
+                            return 0b1
+                    else:
+                        if tarjeta.saldo >= self.pasaje:
+                            tarjeta.debitar(self.pasaje)
+                            return 0b1
         return 0b0
+
+class Libro(object):
+    def __init__(self, categoria, estado):
+        if type(estado) is bool:
+            self.estado = estado
+
+        if categoria in ["CN", "CE", "CS", "CH"]:
+            self.categoria = categoria
+
+    def get_estado(self):
+        return self.estado
+
+    def get_categoria(self):
+        return  self.categoria
+
+    def set_categoria(self, categoria):
+        if categoria in ["CN", "CE", "CS", "CH"]:
+            self.categoria = categoria
+
+    def set_estado(self, estado):
+        if type(estado) is bool:
+            self.estado = estado
+
+class Biblioteca(object):
+    def __init__(self, libro, tarjeta, fecha_actual):
+        self
+
+    def prestarLibro(self,fecha_actual, libro = None, tarjeta = None):
+        if libro is not None and tarjeta is not None:
+            categoria = libro.get_categoria()
+            tiempo_prestamo = 14
+            date_object = datetime.strptime(fecha_actual, '%d/%m/%Y')
+
+            if categoria == "CE":
+                tiempo_prestamo = 7
+
+            if libro.get_estado() is False:
+                if Validador.validar_tarjeta(tarjeta):
+                    date_object += timedelta(days=tiempo_prestamo)
+                    return date_object.strftime("%d/%m/%Y")
+                else:
+                    return "TARJETA NO VALIDA"
+            else:
+                return "LIBRO NO DISPONIBLE"
