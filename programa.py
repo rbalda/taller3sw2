@@ -1,3 +1,6 @@
+import time
+from datetime import date, timedelta,datetime
+
 
 class Tarjeta(object):
     """
@@ -17,6 +20,9 @@ class Tarjeta(object):
         self.apellidos=apellidos
         self.codigo=codigo
         self.saldo=saldo_inicial
+
+    def getCodigo(self):
+        return self.codigo
 
     def debitar(self,valor=0.0):
         """
@@ -81,7 +87,9 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        #inicializa el valor del pasaje general
+        self.pasaje = 0.30
+        self.porcentajeDescuento = 1
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -91,11 +99,79 @@ class Bus(object):
         :return: 1 en binario si el pasaje es pagado, 0 si este no se pudo cobrar
         """
         if dia > 0 and dia <= 5:
-            if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
+            tarjetaStatus = Validador.validar_tarjeta(tarjeta)
+            if tarjetaStatus != "INVALIDA":
+                if tarjetaStatus == "TRABAJADOR":
+                    self.porcentajeDescuento = 0.5
                 if dia == 5:
                     return 0b1
                 else:
-                    if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
+                    if tarjeta.saldo >= (self.pasaje * self.porcentajeDescuento):
+                        tarjeta.debitar(self.pasaje * self.porcentajeDescuento)
                         return 0b1
         return 0b0
+
+
+class Categoria(object):
+    def __init__(self,label=None,tiempoPrestamo=14):
+        self.label = label
+        self.tiempoPrestamo = tiempoPrestamo
+        if label=='CE':
+            self.tiempoPrestamo = 7
+        
+    def getTiempoPrestamo(self):
+        return self.tiempoPrestamo
+
+
+class Libro(object):
+    def __init__(self,nombre=None,categoria=None,estado=0):
+        self.nombre = nombre
+        self.categoria =categoria
+        self.estado = estado
+        self.numeroTarjeta = None #para guardar el dato de quien ha prestado el libro
+
+    def estaDisponible(self):
+        if self.estado==0:
+            return True
+        return False
+
+    def prestar(self,codigoTarjeta,fechaPrestamo):
+        #La funcion se encarga de evaluar el periodo del prestamo segun la categoria
+        #y cambia el estado del libro. 
+        #Devuelve un Objeto con el parametro resultado y otro mensaje
+        
+        if self.estado==0:
+            self.estado==1
+            self.numeroTarjeta = codigoTarjeta
+            tiempo = self.categoria.getTiempoPrestamo()
+            fechaObj = datetime.strptime(fechaPrestamo, '%d/%m/%Y') + timedelta(days=tiempo)
+            return {
+                'resultado':True,
+                'mensaje': "Puede prestar el libro. La fecha de entrega es el "+fechaObj.strftime("%d/%m/%Y")
+            }
+        else:
+            return {
+                'resultado':False,
+                'mensaje': "El libro no esta disponible"
+            }
+
+    
+    
+class Biblioteca(object):
+
+    @classmethod
+    def prestar_libro(cls,libro=None,tarjeta=None,fechaActual=time.strftime("%d/%m/%Y")):
+        #validar tarjeta
+        if Validador.validar_tarjeta(tarjeta) == "INVALIDA":
+            return {
+                'resultado':False,
+                'mensaje': "La tarjeta es invalida"
+            }
+        return libro.prestar(tarjeta.getCodigo(),fechaActual)
+            
+
+    
+
+
+
+
