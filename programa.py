@@ -75,13 +75,79 @@ class Edificio(object):
                 return 0b0
         return 0b0
 
+class Libro(object):
+    """
+    Clase que modela el libro
+    """
+    def __init__(self):
+        """
+        Construntor de la clase que recibe parametros para inicializarla
+        :param nombres: Nombres de la persona a quien pertenece la tarjeta
+        :param apellidos: Apellidos de la persona a quien pertenece la tarjeta
+        :param codigo: Codigo de siete digitos numericos para identificar la tarjeta
+        :param saldo_inicial: Saldo inicial que contiene la tarjeta
+        """
+        self.tipo=tipo
+        self.estado=estado
+    def prestar(self):
+        """
+        Funcion que debita el valor del pasaje que se pase como parametro
+        :param valor: valor del pasaje
+        :return:
+        """
+        self.estado=1
+
+class Fecha(object):
+    def __init__(self):
+        self.anio=anio
+        self.mes=mes
+        self.dia=dia
+
+    def calcular_devolucion7(self):
+        self.dia=self.dia+7
+        if(self.dia>30):
+            self.dia=self.dia-30
+            self.mes=self.mes+1
+            if(self.mes>12):
+                self.mes=1
+                self.anio=self.anio+1
+        print("Tiene que devolver el libro el")
+        print(self.anio)
+        print(self.mes)
+        print(self.dia)
+
+    def calcular_devolucion14(self):
+        self.dia=self.dia+14
+        if(self.dia>30):
+            self.dia=self.dia-30
+            self.mes=self.mes+1
+            if(self.mes>12):
+                self.mes=1
+                self.anio=self.anio+1
+        print("Tiene que devolver el libro el")
+        print(self.anio)
+        print(self.mes)
+        print(self.dia)
+
+class Prestamo(object):
+    def realizar_prestamo(self,tarjeta=None,mes=8, libro=None, fecha=None):
+
+        if mes >= 8:
+            if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
+                if fecha.mes>7:
+                    if libro.tipo=='CE':
+                        libro.calcular_devolucion7
+
+                    elif (libro.tipo=='CN' |libro.tipo=='CS' |libro.tipo=='CH'):
+                        libro.calcular_devolucion14
 
 class Bus(object):
     """
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
+        self.pasajet = 0.15
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -94,8 +160,12 @@ class Bus(object):
             if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
                 if dia == 5:
                     return 0b1
-                else:
+                elif Validador.validar_tarjeta(tarjeta)=="ESTUDIANTE":
                     if tarjeta.saldo >= self.pasaje:
                         tarjeta.debitar(self.pasaje)
+                        return 0b1
+                elif Validador.validar_tarjeta(tarjeta)=="TRABAJADOR":
+                    if tarjeta.saldo >= self.pasaje:
+                        tarjeta.debitar(self.pasajet)
                         return 0b1
         return 0b0
