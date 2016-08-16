@@ -1,4 +1,6 @@
 
+from datetime import *
+
 class Tarjeta(object):
     """
     Clase que modela la tarjeta para acceso a edificio y pago de bus
@@ -81,7 +83,8 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
+        self.pasajeTrabajador = 0.15
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -95,7 +98,48 @@ class Bus(object):
                 if dia == 5:
                     return 0b1
                 else:
-                    if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
+                    if (Validador.validar_tarjeta(tarjeta) == "TRABAJADOR" and tarjeta.saldo >= self.pasajeTrabajador):
+                        tarjeta.debitar(self.pasajeTrabajador)
                         return 0b1
+                    else:
+                        if (Validador.validar_tarjeta(tarjeta) == "ESTUDIANTE" and tarjeta.saldo >= self.pasaje):
+                            tarjeta.debitar(self.pasaje)
+                            return 0b1
         return 0b0
+
+
+class Libro(object):
+    """
+    Clase que modela el libro posible a prestar
+    """
+    def __init__(self,categoria=None,estado=0):
+        """
+        Construntor de la clase que recibe parametros para inicializarla
+        :param categoria: Categoria del Libro
+        :param estado: Estado del libro 1= prestado 0 = Disponible
+        """
+
+        self.categoria=categoria
+        self.estado=estado
+
+
+class Biblioteca(object):
+    """
+    Modulo que presta libros
+    """
+    def prestar_libro(self,tarjeta=None, libro=None, fecha= None):
+        """
+        Funcion que valida el prestamo de un libro
+        """
+        if(libro.estado == 0):
+            if(libro.categoria == 'CE'):
+                date1 = datetime.strptime(fecha, "%d/%m/%Y")
+                date2= date1 + timedelta(days=7)
+                date = date2.strftime("%d/%m/%Y")
+                return date
+            if(libro.categoria == 'CN' or libro.categoria == 'CS' or libro.categoria == 'CH'):
+                date1 = datetime.strptime(fecha, "%d/%m/%Y")
+                date2= date1 + timedelta(days=14)
+                date = date2.strftime("%d/%m/%Y")
+                return date
+        return 'No permitido'
