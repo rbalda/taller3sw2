@@ -165,7 +165,7 @@ class Pruebas(unittest.TestCase):
         validar = Validador.validar_tarjeta(Tarjeta("f","e", "9999999", 3))
         self.assertEqual(validar, "ESTUDIANTE", None)
 
-    def test_codigo_invalido(self):
+    def test_codigo_invalido1(self):
         validar = Validador.validar_tarjeta(Tarjeta("f","e", "99999999", 3))
         self.assertEqual(validar, "INVALIDA", None)
 
@@ -197,7 +197,7 @@ class Pruebas(unittest.TestCase):
         acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 6, 15)
         self.assertEqual(acceso, 0b1, None)
 
-    def test_dia_invalido(self):
+    def test_dia_invalido1(self):
         acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 8, 15)
         self.assertEqual(acceso, 0b0, None)
 
