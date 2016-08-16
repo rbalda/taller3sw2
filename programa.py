@@ -1,4 +1,6 @@
 
+import datetime
+
 class Tarjeta(object):
     """
     Clase que modela la tarjeta para acceso a edificio y pago de bus
@@ -81,7 +83,7 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -96,6 +98,65 @@ class Bus(object):
                     return 0b1
                 else:
                     if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
+                        if Validador.validar_tarjeta(tarjeta) == "TRABAJADOR":
+                            tarjeta.debitar(self.pasaje/2)
+                        else:
+                            tarjeta.debitar(self.pasaje)
                         return 0b1
         return 0b0
+
+class Biblioteca(object):
+
+    def prestar_libro(self, libro=None, tarjeta=None, fecha=None):
+        fecha_obj = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
+        if libro.esta_disponible():
+            fecha_limite = fecha_obj + + datetime.timedelta(days=libro.get_fecha_limite())
+            return "Fecha límite: " + fecha_limite.strftime("%d/%m/%Y")
+        return 0b0
+
+
+class Libro(object):
+    """
+    Modulo de libro
+    """
+    def __init__(self, nombre=None, categoria=None, estado=0):
+        """
+        Constructor de la clase libro que recibe parametros para inicializarla
+        :param nombre: Nombres del libro
+        :param categoria: Categoría adjunta del libro
+        :param estado: Estado en el que se encuentra el libro
+        """
+        self.nombre=nombre
+        if self.categoria_valida(categoria):
+            self.categoria=categoria
+        else:
+            self.categoria=None            
+        self.estado=estado
+
+    def get_categoria(self):
+        return self.categoria
+
+    def get_fecha_limite(self):
+        categoria = self.get_categoria()
+        if categoria != None:
+            if categoria == "CE":
+                return 7
+            return 14
+        return 0
+
+    def esta_disponible(self):
+        if self.categoria_valida(self.get_categoria):
+            return self.estado==0
+        return False
+
+    def categoria_valida(self, categoria=None):
+        if categoria != None:
+            if (categoria == "CE" or categoria == "CN" or categoria == "CS" or categoria == "CH"):
+                return True
+        return False
+
+
+tarjeta = Tarjeta("AA", "BB", "0034567", 10)
+libro = Libro("","CAN")
+biblioteca = Biblioteca()
+print(biblioteca.prestar_libro(libro,tarjeta,"16/08/2016"))
