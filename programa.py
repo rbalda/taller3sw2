@@ -1,4 +1,5 @@
-
+import datetime
+import unittest
 class Tarjeta(object):
     """
     Clase que modela la tarjeta para acceso a edificio y pago de bus
@@ -81,7 +82,8 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
+        self.pasaje_trabajador = 0.15
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -94,8 +96,137 @@ class Bus(object):
             if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
                 if dia == 5:
                     return 0b1
+                elif Validador.validar_tarjeta(tarjeta)=="TRABAJADOR":
+                    tarjeta.debitar(self.pasaje_trabajador)
+                    return 0b1
                 else:
                     if tarjeta.saldo >= self.pasaje:
                         tarjeta.debitar(self.pasaje)
                         return 0b1
         return 0b0
+
+class Libro(object):
+    """
+    Clase que modela al libro
+    """
+    def __init__(self, nombre=None, categoria=None, estado=0):
+        """
+        Construntor de la clase que recibe parametros para inicializarla
+        :param nombre: Nombre del libro
+        :param categoria: Categoria a la que pertenece el libro
+        :param estado: Estado del libro
+        """
+        self.nombre=nombre
+        self.categoria=categoria
+        self.estado=estado
+
+class Biblioteca(object):
+    """
+    Modulo que permite prestar libros
+    """
+    def prestar_libro(self, libro, tarjeta, fecha_actual):
+        if Validador.validar_tarjeta(tarjeta) != "INVALIDA" and libro.estado == 0:
+            fecha_entrada = datetime.datetime.strptime(fecha_actual, "%d/%m/%Y")
+            if libro.categoria == "CE":
+                fecha_cierre = fecha_entrada + datetime.timedelta(days=7)
+            elif libro.categoria == "CN" or libro.categoria == "CH" or libro.categoria == "CS":
+                fecha_cierre = fecha_entrada + datetime.timedelta(days=14)
+
+            fecha_cierre = datetime.datetime.strftime(fecha_cierre, "%d/%m/%Y")
+            print(fecha_cierre)
+            return fecha_cierre
+        return None
+        return "No se puede prestar el libro"
+
+
+# Creando casos de prueba
+class Pruebas(unittest.TestCase):
+    def test_prestar_libro_CE(self):
+        biblioteca = Biblioteca()
+        prestamo = biblioteca.prestar_libro(Libro("Prueba","CE", 0), Tarjeta("a","b","0012345",1), "20/03/2015")
+        self.assertEqual(prestamo, "27/03/2015", "27/03/2015")
+
+    def test_prestar_libro_CS(self):
+        biblioteca = Biblioteca()
+        prestamo = biblioteca.prestar_libro(Libro("Prueba","CS", 0), Tarjeta("a","b","0012345",1), "22/08/2016")
+        self.assertEqual(prestamo, "05/09/2016", "05/09/2016")
+
+    def test_prestar_libro_invalido(self):
+        biblioteca = Biblioteca()
+        prestamo = biblioteca.prestar_libro(Libro("Prueba","CS", 0), Tarjeta("a","b","02012345",1), "22/08/2016")
+        self.assertEqual(prestamo, None, "No se puede prestar el libro")
+
+    def test_codigo_empleado_valido(self):
+        validar = Validador.validar_tarjeta(Tarjeta("f","e", "0099999", 3))
+        self.assertEqual(validar, "TRABAJADOR", None)
+
+    def test_codigo_estudiante_valido(self):
+        validar = Validador.validar_tarjeta(Tarjeta("f","e", "9999999", 3))
+        self.assertEqual(validar, "ESTUDIANTE", None)
+
+    def test_codigo_invalido(self):
+        validar = Validador.validar_tarjeta(Tarjeta("f","e", "99999999", 3))
+        self.assertEqual(validar, "INVALIDA", None)
+
+    def test_codigo_invalido(self):
+        validar = Validador.validar_tarjeta(Tarjeta("f","e", None, 3))
+        self.assertEqual(validar, "INVALIDA", None)
+
+    def test_acceso_estudiante_dia_laboral(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "9999999", 3), 1, 8)
+        self.assertEqual(acceso, 0b1, None)
+
+    def test_hora_invalida_estudiante_dia_laboral(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "9999999", 3), 5, 19)
+        self.assertEqual(acceso, 0b0, None)
+
+    def test_dia_invalido_estudiante_dia_laboral(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "9999999", 3), 6, 18)
+        self.assertEqual(acceso, 0b0, None)
+
+    def test_empleado_dia_laboral(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 2, 23)
+        self.assertEqual(acceso, 0b1, None)
+
+    def test_hora_invalida_empleado_dia_laboral(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 3, 24)
+        self.assertEqual(acceso, 0b1, None)
+
+    def test_empleado_fin_semana_dia_invalido(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 3, 15)
+        self.assertEqual(acceso, 0b0, None)
+
+    def test_empleado_fin_semana_dia_invalido(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 6, 15)
+        self.assertEqual(acceso, 0b1, None)
+
+    def test__dia_invalido(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 8, 15)
+        self.assertEqual(acceso, 0b0, None)
+
+    def test_permiso_invalido(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "02099999", 3), 8, 15)
+        self.assertEqual(acceso, 0b0, None)
+
+    def test_dia_gratis(self):
+        bus = Bus().cobrar_pasaje(Tarjeta("f","e", "0099999", 3), 5)
+        self.assertEqual(bus, 0b1, None)
+
+    def test_empleadoMitadPrecio(self):
+        bus = Bus().cobrar_pasaje(Tarjeta("f","e", "0099999", 0.15), 2)
+        self.assertEqual(bus, 0b1, None)
+
+    def test_estudiantePaga(self):
+        bus = Bus().cobrar_pasaje(Tarjeta("f","e", "9999999", 0.30), 2)
+        self.assertEqual(bus, 0b1, None)
+
+    def test_diaBusinvalido(self):
+        bus = Bus().cobrar_pasaje(Tarjeta("f","e", "9999999", 0.30), 8)
+        self.assertEqual(bus, 0b0, None)
+    #def test_pasaje_insuficiente(self):
+    #    Bus().cobrar_pasaje(self,Tarjeta(),dia=0)
+    #    self.assertEqual(prestamo, "INVALIDA", None)
+
+
+if __name__ == "__main__":
+    unittest.main()
