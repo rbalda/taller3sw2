@@ -129,12 +129,12 @@ class Biblioteca:
         else:
             end_date = fecha_actual + datetime.timedelta(days=14) #tiempo limite de 14 dias 
 
-        self.presentarFehaLimite(end_date)
+        self.presentarFechaLimite(end_date)
         return 0b1
 
-    def presentarFechaLimite(date):
-        format_today = '{0:%Y/%m/%d}'.format(date)
-        print("La fecha maxima es: " ´+ format_today)
+    def presentarFechaLimite(self, dia):
+        format_today = '{0:%Y/%m/%d}'.format(dia)
+        print("La fecha maxima es: " + format_today)
 
     #validar el estado ingresado
     def validarEstado(self):
