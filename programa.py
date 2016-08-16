@@ -1,9 +1,10 @@
+import datetime
 
 class Tarjeta(object):
     """
     Clase que modela la tarjeta para acceso a edificio y pago de bus
     """
-    def __init__(self,nombres=None,apellidos=None,codigo=None,saldo_inicial=0.0):
+    def __init__(self,nombres,apellidos,codigo,saldo_inicial):
         """
         Construntor de la clase que recibe parametros para inicializarla
         :param nombres: Nombres de la persona a quien pertenece la tarjeta
@@ -81,21 +82,60 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
 
-    def cobrar_pasaje(self,tarjeta=None,dia=0):
+    def cobrar_pasaje(self,tarjeta,dia):
         """
         Funcion que verifica que el pasaje haya sido pagado exitosamente
         :param tarjeta: Tarjeta del usuario que paga el pasaje
         :param dia: dia de la senama en el que cobra el pasaje
         :return: 1 en binario si el pasaje es pagado, 0 si este no se pudo cobrar
         """
-        if dia > 0 and dia <= 5:
+        if dia > 0 and dia < 5:
             if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
                 if dia == 5:
                     return 0b1
                 else:
+                    if Validador.validar_tarjeta(tarjeta)=="TRABAJADOR":
+                        self.pasaje = 0.15
+                    else:
+                        self.pasaje = 0.30
                     if tarjeta.saldo >= self.pasaje:
                         tarjeta.debitar(self.pasaje)
                         return 0b1
         return 0b0
+
+class Libro(object):
+
+    def __init__(self,estado, categoria):
+        self.estado = estado
+        self.categoria = categoria
+
+    def getEstado(self):
+        return self.estado
+
+    def getCategoria(self):
+        return self.categoria
+    
+
+class Biblioteca(object):
+    '''
+    
+    '''
+    def __init__(self, Libro,Tarjeta,fecha):
+        self.libro = Libro
+        self.tarjeta = Tarjeta
+        self.fecha = fecha
+
+    def prestar_libro(self):
+        if self.libro.getEstado() == 0b1 or Validador.validar_tarjeta(self.tarjeta) == "INVALIDA":
+            return None
+        else:
+            if self.libro.getEstado() == 0b0:
+                if self.libro.getCategoria() == 'CE':
+                    fechaRetorno = datetime.date(self.fecha.year,self.fecha.month, self.fecha.day + 7)
+                    return fechaRetorno
+                else:
+                    fechaRetorno = datetime.date(self.fecha.year,self.fecha.month, self.fecha.day + 14)
+                    return fechaRetorno
+                    
