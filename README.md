@@ -5,7 +5,7 @@ Para este taller realice lo siguiente:
 
 1\. Realice un clone del repositorio con `git clone https://github.com/rbalda/taller2sw2.git `
 
-2\. Ingrese a la carpeta `cd taller2sw2`
+2\. Ingrese a la carpeta `cd taller3sw2`
 
 3\. Cree una nueva rama con el nombre de su usuario de github `git checkout -b su_nombre_usuario_github`
 
