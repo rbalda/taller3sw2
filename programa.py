@@ -1,4 +1,4 @@
-
+from datetime import datetime
 class Tarjeta(object):
     """
     Clase que modela la tarjeta para acceso a edificio y pago de bus
@@ -81,8 +81,8 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
-
+        self.pasaje = 0.30 #cambio de valor de pasaje de 0.25 a 0.30
+        self.pasajeDiferenciado= 0.15 #cambio de valor al pasaje de trabajadores
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
         Funcion que verifica que el pasaje haya sido pagado exitosamente
@@ -95,7 +95,50 @@ class Bus(object):
                 if dia == 5:
                     return 0b1
                 else:
-                    if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
-                        return 0b1
+                    if Validador.validar_tarjeta(tarjeta)== "ESTUDIANTE":  #verificala tarjeta para debitar el saldo de estudiante
+                        if tarjeta.saldo >= self.pasaje:
+                            tarjeta.debitar(self.pasaje)
+                            return 0b1
+                    elif Validador.validar_tarjeta(tarjeta)== "TRABAJADOR": #verifica la tarjeta para debitar el saldo de trabajador
+                         if tarjeta.saldo >= self.pasajeDiferenciado:
+                            tarjeta.debitar(self.pasajeDiferenciado)
+                            return 0b1
         return 0b0
+
+class Libro(object):
+        """
+        Estructura de datos que representa un libro de una biblioteca
+        """
+        def __init__(self,nombre,categoria):
+            """
+            Constructor de la clase libro
+            :param nombre: Nombre del libro
+            :param categoria: Categoria del libro ciencias naturales CN,ciencias exactas CE, ciencias sociales CS
+            :estado: 1 en binario si el libro esta prestado, 0 si esta disponible
+            """
+            self.nombre=nombre
+            self.categoria=categoria
+            self.estado=0
+class Biblioteca(object):
+        """
+        Estructura de datos que verifica un prestamo de un libro
+        """
+        def __init__(self):
+            pass
+
+        def prestar(self,libro=None,fecha=''):
+            self.dias=  int((datetime.strptime(fecha, '%d/%m/%Y').date()-datetime.now().date()).days)
+            if libro.estado==0:
+                if libro.categoria=="CE" and self.dias<=7:
+                    libro.estado=1
+                    print("Se realizo el prestamo correctamente del libro ", libro.nombre)
+                    return 1
+                elif libro.categoria!="CE" and self.dias<=14:
+                    libro.estado=1
+                    print("Se realizo el prestamo correctamente del libro ", libro.nombre)
+                    return 1
+                else:
+                    print("La fecha del prestamo no es correcta")
+                    return 0
+            print ("El libro ",libro.nombre, " se encuentra prestado")
+            return 0
