@@ -99,3 +99,74 @@ class Bus(object):
                         tarjeta.debitar(self.pasaje)
                         return 0b1
         return 0b0
+
+    def aumento_pasaje(self):
+        self.pasaje = self.pasaje + 0.05;
+
+
+
+
+class Libro(object):
+    categoria= ""
+    tiempomax = 0
+    estado = 0  #disponible
+
+
+    def __init__(self,categoria,estado):
+        self.categoria=categoria
+        self.estado= estado
+
+    def obtener_categoria(self,abrv):
+        cat=""
+        if(abrv=="CE"):
+            cat="Ciencias Exactas"
+        elif(abrv=="CN"):
+            cat="Ciencias Naturales"
+        elif(abrv=="CH"):
+            cat="Ciencias Humanas"
+        elif(abrv=="CS"):
+            cat="Ciencias Sociales"
+        else:
+            cat=""
+
+        return cat
+
+    def obtener_tiempomax(self,abrv):
+
+
+         if(abrv=="CE"):
+             return  7
+         elif(abrv=="CN" or abrv=="CS" or abrv=="CH"):
+             return  14
+         else:
+             return  0
+
+class Biblioteca(object):
+
+        #LIBRO, TARJETA, FECHA
+
+        @classmethod
+        def prestar_libro(cls,libro,tarjeta,fecha):
+            tmax=0
+            if(libro.estado==0):
+                print("disponible")
+                if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
+                    return None
+                else:
+
+                    tmax = libro.obtener_tiempomax(libro.categoria)
+                    print("Usted ha prestado un libro de " + libro.categoria)
+                    nfec =  int(fecha[0])*10 + int(fecha[1])
+                    ndev = nfec + libro.obtener_tiempomax(libro.categoria)
+                    print("Fecha Actual " + fecha)
+                    print("Fecha Devolucion" + " " + str(ndev) + "/" + fecha[3]+ fecha[4]+ "/" + fecha[6]+ fecha[7]+ fecha[8])
+                    return 1
+
+            else:
+                #print("Libro no disponible")
+                return None
+
+
+
+
+
