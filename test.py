@@ -10,7 +10,7 @@ class AddTest(unittest.TestCase):
        self.edificio=Edificio()
        self.libro=Libro()
        self.fecha=Fecha()
-       self.Prestamo=Prestamo()
+       self.prestamo=Prestamo()
 
    def tearDown(self):
       pass
@@ -59,7 +59,7 @@ class AddTest(unittest.TestCase):
        self.fecha.anio=2016
        self.fecha.mes=11
        self.fecha.dia=20
-       self.assertEqual(Prestamo.realizar_prestamo(self,self.tarjeta, self.libro, self.fecha),1)
+       self.assertEqual(Prestamo.realizar_prestamo(self.prestamo,self.tarjeta, self.libro, self.fecha),1)
 
 
 
