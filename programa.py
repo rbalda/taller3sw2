@@ -108,10 +108,11 @@ class Bus(object):
 class Biblioteca(object):
 
     def prestar_libro(self, libro=None, tarjeta=None, fecha=None):
-        fecha_obj = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
-        if libro.esta_disponible():
-            fecha_limite = fecha_obj + + datetime.timedelta(days=libro.get_fecha_limite())
-            return "Fecha límite: " + fecha_limite.strftime("%d/%m/%Y")
+        if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
+            fecha_obj = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
+            if libro.esta_disponible():
+                fecha_limite = fecha_obj + + datetime.timedelta(days=libro.get_fecha_limite())
+                return "Fecha límite: " + fecha_limite.strftime("%d/%m/%Y")
         return 0b0
 
 
@@ -142,10 +143,9 @@ class Libro(object):
             if categoria == "CE":
                 return 7
             return 14
-        return 0
 
     def esta_disponible(self):
-        if self.categoria_valida(self.get_categoria):
+        if self.categoria_valida(self.get_categoria()):
             return self.estado==0
         return False
 
@@ -157,6 +157,6 @@ class Libro(object):
 
 
 tarjeta = Tarjeta("AA", "BB", "0034567", 10)
-libro = Libro("","CAN")
+libro = Libro("","CN",0)
 biblioteca = Biblioteca()
 print(biblioteca.prestar_libro(libro,tarjeta,"16/08/2016"))
