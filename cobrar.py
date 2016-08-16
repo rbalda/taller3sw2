@@ -17,12 +17,12 @@ class Cobrar():
 			elif (0.0 <= tarjeta.saldo < 0.3):
 				print ("Saldo insuficiente, saldo total: "+str(tarjeta.saldo))
 				return 0
+			elif (tarjeta.saldo < 0.0):
+				print ("Saldo invalido")
+				return 0
 		elif (dia == 5 and tarjeta.saldo >= 0.0):
 			print ("Viernes (gratuito): Cobrado 0.0, saldo total: "+str(tarjeta.saldo))
 			return 1
 		elif (dia > 5 or dia < 1):
 			print ("Error dia invalido: solo lunes a viernes")
-			return 0
-		elif (tarjeta.saldo < 0.0):
-			print ("Saldo invalido")
 			return 0
