@@ -2,6 +2,7 @@ import unittest
 from programa import Tarjeta
 from programa import Biblioteca
 from programa import Libro
+from programa import Bus
 
 class pruebas(unittest.TestCase):
     """ Todos los datos correctos, Libro tiene categoria CN,
@@ -44,13 +45,28 @@ class pruebas(unittest.TestCase):
 
     """ Libro no disponible, retorna 0"""
     def test_function_5(self):
-        tarjeta = Tarjeta("AA", "BB", "003456", 10)
+        tarjeta = Tarjeta("AA", "BB", "0034567", 10)
         libro = Libro("","CE",1)
         biblioteca = Biblioteca()
         valor1 = biblioteca.prestar_libro(libro,tarjeta,"16/08/2016")
         valor2 = 0
         self.assertEqual(valor1, valor2)
 
+    """ Pagar bus todo correcto"""
+    def test_function_6(self):
+        tarjeta = Tarjeta("AA", "BB", "0034567", 10)
+        bus = Bus()
+        valor1 = bus.cobrar_pasaje(tarjeta,1)
+        valor2 = 1
+        self.assertEqual(valor1, valor2)
+
+    """ Pagar bus dia 5"""
+    def test_function_7(self):
+        tarjeta = Tarjeta("AA", "BB", "0034567", 10)
+        bus = Bus()
+        valor1 = bus.cobrar_pasaje(tarjeta,5)
+        valor2 = 1
+        self.assertEqual(valor1, valor2)
 
 if __name__ == '__main__':
     unittest.main()
