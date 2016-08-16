@@ -1,3 +1,5 @@
+from datetime import timedelta
+import datetime 
 
 class Tarjeta(object):
     """
@@ -81,7 +83,7 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        self.pasaje = 0.30
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -95,7 +97,38 @@ class Bus(object):
                 if dia == 5:
                     return 0b1
                 else:
-                    if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
+                    pasaje_actual = self.pasaje
+                    if Validador.validar_tarjeta(tarjeta) == "TRABAJADOR":
+                        pasaje_actual = self.pasaje / 2
+                    if tarjeta.saldo >= pasaje_actual:
+                        tarjeta.debitar(pasaje_actual)
                         return 0b1
         return 0b0
+
+class Libro(object):
+    """
+    Modelo del Libro
+    """
+    def __init__(self, categoria=""):
+        self.categoria = categoria
+        self.prestado = 0
+
+class Biblioteca(object):
+    """
+    Modelo del Libro
+    """
+    def prestar(libro, tarjeta, fecha):
+        if libro.prestado != 1:
+            mydate = fecha + timedelta(days=14)
+            if libro.categoria == "CE":
+                mydate = mydate - timedelta(days=7)
+        return mydate.strftime("%d/%m/%Y")
+
+"""
+biblio = Biblioteca()
+card = "sdf"
+libro = Libro("CE")
+mydate = datetime.date.today()
+someDate = Biblioteca.prestar(libro, card, mydate)
+print(someDate)
+"""
