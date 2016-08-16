@@ -79,5 +79,11 @@ class Test(unittest.TestCase):
         t = Tarjeta('Angely', 'Oyola', '0012345', 0.10)
         self.assertEquals(b.cobrar_pasaje(t,2), 0b0)
 
+    def test15(self):
+        l = Libro('CS', 0)
+        t = Tarjeta('Angely', 'Oyola', '101552345', 1)
+        b = Biblioteca()
+        self.assertEquals(b.prestar_libro(t,l, '10/12/2016'), 'No permitido')
+
 if __name__ == '__main__':
     unittest.main()

@@ -131,15 +131,16 @@ class Biblioteca(object):
         """
         Funcion que valida el prestamo de un libro
         """
-        if(libro.estado == 0):
-            if(libro.categoria == 'CE'):
-                date1 = datetime.strptime(fecha, "%d/%m/%Y")
-                date2= date1 + timedelta(days=7)
-                date = date2.strftime("%d/%m/%Y")
-                return date
-            if(libro.categoria == 'CN' or libro.categoria == 'CS' or libro.categoria == 'CH'):
-                date1 = datetime.strptime(fecha, "%d/%m/%Y")
-                date2= date1 + timedelta(days=14)
-                date = date2.strftime("%d/%m/%Y")
-                return date
+        if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
+            if(libro.estado == 0):
+                if(libro.categoria == 'CE'):
+                    date1 = datetime.strptime(fecha, "%d/%m/%Y")
+                    date2= date1 + timedelta(days=7)
+                    date = date2.strftime("%d/%m/%Y")
+                    return date
+                if(libro.categoria == 'CN' or libro.categoria == 'CS' or libro.categoria == 'CH'):
+                    date1 = datetime.strptime(fecha, "%d/%m/%Y")
+                    date2= date1 + timedelta(days=14)
+                    date = date2.strftime("%d/%m/%Y")
+                    return date
         return 'No permitido'
