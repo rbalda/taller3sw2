@@ -106,8 +106,8 @@ class Bus(object):
 
 class Biblioteca(object):
     """
-    modulo Biblioteca, sirve para el préstamo de libros
-    """
+    modulo Biblioteca, sirve para el prestamo de libros
+	"""
     tiempo_prestamo = 14
 
     @classmethod
