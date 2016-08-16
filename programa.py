@@ -135,8 +135,9 @@ class Biblioteca(object):
             fecha_cierre = datetime.datetime.strftime(fecha_cierre, "%d/%m/%Y")
             print(fecha_cierre)
             return fecha_cierre
+
+        print("No se puede prestar el libro")
         return None
-        return "No se puede prestar el libro"
 
 
 # Creando casos de prueba
@@ -193,20 +194,21 @@ class Pruebas(unittest.TestCase):
         self.assertEqual(acceso, 0b1, None)
 
     def test_empleado_fin_semana_dia_invalido(self):
-        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 3, 15)
-        self.assertEqual(acceso, 0b0, None)
-
-    def test_empleado_fin_semana_dia_invalido(self):
         acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 6, 15)
         self.assertEqual(acceso, 0b1, None)
 
-    def test__dia_invalido(self):
+    def test_dia_invalido(self):
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 8, 15)
+        self.assertEqual(acceso, 0b0, None)
+
+    def test_dia_invalido(self):
         acceso = Edificio().conceder_acceso(Tarjeta("f","e", "0099999", 3), 8, 15)
         self.assertEqual(acceso, 0b0, None)
 
     def test_permiso_invalido(self):
-        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "02099999", 3), 8, 15)
+        acceso = Edificio().conceder_acceso(Tarjeta("f","e", "02099999", 3), 5, 15)
         self.assertEqual(acceso, 0b0, None)
+
 
     def test_dia_gratis(self):
         bus = Bus().cobrar_pasaje(Tarjeta("f","e", "0099999", 3), 5)
