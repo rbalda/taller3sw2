@@ -1,4 +1,3 @@
-import datetime
 
 class Tarjeta(object):
     """
@@ -6,7 +5,7 @@ class Tarjeta(object):
     """
     def __init__(self,nombres=None,apellidos=None,codigo=None,saldo_inicial=0.0):
         """
-        Constructor de la clase que recibe parametros para inicializarla
+        Construntor de la clase que recibe parametros para inicializarla
         :param nombres: Nombres de la persona a quien pertenece la tarjeta
         :param apellidos: Apellidos de la persona a quien pertenece la tarjeta
         :param codigo: Codigo de siete digitos numericos para identificar la tarjeta
@@ -82,7 +81,7 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.30
+        self.pasaje = 0.25
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -96,53 +95,7 @@ class Bus(object):
                 if dia == 5:
                     return 0b1
                 else:
-                    if Validador.validar_tarjeta(tarjeta)=="TRABAJADOR":
-                        if tarjeta.saldo >= self.pasaje:
-                            tarjeta.debitar(self.pasaje/2)
-                            return 0b1
-                    else:
-                        if tarjeta.saldo >= self.pasaje:
-                            tarjeta.debitar(self.pasaje)
-                            return 0b1
+                    if tarjeta.saldo >= self.pasaje:
+                        tarjeta.debitar(self.pasaje)
+                        return 0b1
         return 0b0
-
-
-class Libro(object):
-    """
-    Clase libro
-    """
-    def __init__(self, titulo = None, categoria = None, estado =0 ):
-        "Constructor de la clase libro"
-        self.titulo=titulo
-        self.categoria=categoria
-        self.estado=0
-
-    def prestar(self):
-        if self.estado==0:
-            self.estado=1
-
-
-class Biblioteca(object):
-    """
-    Modulo Biblioteca
-    """
-    def hacer_prestamo(self, libro, tarjeta, fecha):
-        """
-        Funcion usada para determinar si es posible hacer el prestamo de un libro
-        en caso de ser posible se retorna la fecha de retorno.
-        """
-        if libro.estado == 0:
-            if libro.categoria =="CE":
-                fecha_entrega = self.fecha + datetime.timedelta(days=7)
-                libro.prestar()
-                return fecha_entrega
-            else:
-                if libro.categoria=="CN" or libro.categoria=="CS" or libro.categoria=="CH":
-                    fecha_entrega = self.fecha + datetime.timedelta(days=14)
-                    libro.prestar()
-                    return fecha_entrega
-                else:
-                    return 0
-
-        else:
-            return 0
