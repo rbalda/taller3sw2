@@ -53,8 +53,8 @@ class AddTest(unittest.TestCase):
         self.assertEqual(self.codigo2.cobrar_pasaje('1212345',5),0b0)
     def test_cobrar_pasaje_trabajador(self):
         self.assertEqual(self.codigo2.cobrar_pasaje('0023456',2),0b0)
-    def test_prestar_libro(self):
-        self.assertEqual(self.biblioteca.prestar_libro('CE','1212345',16),None)
+    #def test_prestar_libro(self):
+    #    self.assertEqual(self.biblioteca.prestar_libro('CE','1212345',16),None)
 
 
 if __name__=='__main__':
