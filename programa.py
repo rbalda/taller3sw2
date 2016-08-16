@@ -1,3 +1,4 @@
+import datetime
 
 class Tarjeta(object):
     """
@@ -81,7 +82,10 @@ class Bus(object):
     Modulo que verifica el pago del bus
     """
     def __init__(self):
-        self.pasaje = 0.25
+        """
+        pasaje aumentado a 30 ctvs
+        """
+        self.pasaje = 0.30
 
     def cobrar_pasaje(self,tarjeta=None,dia=0):
         """
@@ -95,7 +99,66 @@ class Bus(object):
                 if dia == 5:
                     return 0b1
                 else:
-                    if tarjeta.saldo >= self.pasaje:
-                        tarjeta.debitar(self.pasaje)
-                        return 0b1
+                    """
+                    si el usuario es trabajador paga la mitad de su pasaje
+                    si es estudiante paga pasaje completo
+                    """
+                    if Validador.validar_tarjeta(tarjeta)=="TRABAJADOR":
+                        if tarjeta.saldo >= self.pasaje:
+                            tarjeta.debitar(self.pasaje/2)
+                            return 0b1
+                    elif Validador.validar_tarjeta(tarjeta)=="ESTUDIANTE":
+                        if tarjeta.saldo >= self.pasaje:
+                            tarjeta.debitar(self.pasaje)
+                            return 0b1
         return 0b0
+
+class Libro(object):
+    """
+    Clase que modela un libro de Biblioteca
+    """
+
+    def __init__(self,categoria="",estado=0):
+        """
+        Constructor de la clase que recibe parametros para inicializarla
+        :param categoria: CE, CS, CN, CH
+        :param estado: 0 disponible - 1 prestado
+        """
+        self.categoria = categoria
+        self.estado = estado
+
+
+class Biblioteca(object):
+    """
+    Modulo que realiza el prestamo de libros
+    """
+    @classmethod
+    def prestamo_libros(cls,tarjeta=None,libro=None,dia=0,mes=0,anio=0):
+        """
+        Funcion que realiza el prestamo de libros
+        :param tarjeta: Tarjeta del usuario que paga el pasaje
+        :param libro: Libro a prestarse
+        :param dia: dia que se realiza el prestamo en entero 1 - 31
+        :param mes: mes que se realiza el prestamo en entero 1 - 12
+        :param anio: anio que se realiza el prestamo en entero ej: 2015
+        """
+        if libro.estado == 0:
+            if Validador.validar_tarjeta(tarjeta) != "INVALIDA":
+                if libro.categoria == "CE":
+                    #7 dias
+                    tiempo_prestamo = datetime.timedelta(days=7)
+                    #creacion fecha
+                    fecha_prestamo = datetime.date(anio,mes,dia)
+                    fecha_entrega = fecha_prestamo + tiempo_prestamo
+                    return "{}/{}/{}".format(fecha_entrega.day,fecha_entrega.month,fecha_entrega.year)
+                else:
+                    #14 dias
+                    tiempo_prestamo = datetime.timedelta(days=14)
+                    #creacion fecha
+                    fecha_prestamo = datetime.date(anio,mes,dia)
+                    fecha_entrega = fecha_prestamo + tiempo_prestamo
+                    return "{}/{}/{}".format(fecha_entrega.day,fecha_entrega.month,fecha_entrega.year)
+            else:
+                return "Tarjeta invalida"
+        else:
+            return "El libro ya ha sido prestado"
