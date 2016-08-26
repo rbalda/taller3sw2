@@ -4,8 +4,8 @@ python:
 
 before_install: "pip install -r requeriments.txt"
 
-script: 
- - python -m coverage run test.py
+script:
+ - python -m coverage run tests.py
 
 after_script:
   "coveralls"
