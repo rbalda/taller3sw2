@@ -20,6 +20,7 @@ from programa import Biblioteca
 from programa import Libro
 from programa import Tarjeta
 from programa import Edificio
+from programa import Bus
 
 
 class ProbarSistemaAcceso(unittest.TestCase):
