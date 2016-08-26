@@ -3,10 +3,43 @@ from programa import Tarjeta
 from programa import Biblioteca
 from programa import Libro
 from programa import Bus
+from programa import Edificio
 
 class pruebas(unittest.TestCase):
     """ Todos los datos correctos, Libro tiene categoria CN,
           la fecha tiene que sumarse 14 dias """
+
+    def setUp(self):
+        self.edificio= Edificio()
+        self.bus = Bus()
+
+    def test_accede_trabajador_horario_normal(self):
+        trabajador = Tarjeta("Juan","De la Cruz","0012345",0.50)
+        assert self.edificio.conceder_acceso(trabajador,5,0) == 0b1
+
+    def test_accede_trabajador_fin_semana(self):
+        trabajador = Tarjeta("Juan","De la Cruz","0012345",0.50)
+        assert self.edificio.conceder_acceso(trabajador,6,15) == 0b1
+
+    def test_trabajador_no_accede(self):
+        trabajador = Tarjeta("Juan","De la Cruz","0012345",0.50)
+        assert self.edificio.conceder_acceso(trabajador,6,16) == 0b0
+
+    def test_accede_estudiante(self):
+        estudiante = Tarjeta("Manuel","Torres","1112345",1)
+        assert self.edificio.conceder_acceso(estudiante,5,18)==0b1
+
+    def test_estudiante_no_accede(self):
+        estudiante = Tarjeta("Manuel","Torres","1112345",1)
+        assert self.edificio.conceder_acceso(estudiante,5,19)==0b0
+
+    def test_tarjeta_invalida(self):
+        tarjeta = Tarjeta("Manuel","Torres","11123a5",1)
+        assert self.edificio.conceder_acceso(tarjeta,5,19)==0b0
+
+    def test_tarjeta_none(self):
+        assert self.edificio.conceder_acceso(None,5,19) == 0b0
+
     def test_function_1(self):
         tarjeta = Tarjeta("AA", "BB", "0034567", 10)
         libro = Libro("","CN",0)
@@ -24,7 +57,7 @@ class pruebas(unittest.TestCase):
         valor1 = biblioteca.prestar_libro(libro,tarjeta,"16/08/2016")
         valor2 = "Fecha límite: 23/08/2016"
         self.assertEqual(valor1, valor2)
-   
+
     """ Tarjeta inválida, retorna 0"""
     def test_function_3(self):
         tarjeta = Tarjeta("AA", "BB", "003456", 10)
