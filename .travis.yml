@@ -2,12 +2,10 @@ language: python
 python:
   - "3.4"
 
-install: 
-  - pip install nose coverage python-coveralls 
-script: 
-  - nosetests --with-coverage
+install:
+  - pip install nose coverage coveralls
+script:
+  - python -m coverage run test_programa.py
 
 after_success:
   - coveralls
- 
- 
